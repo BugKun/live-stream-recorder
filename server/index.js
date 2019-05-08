@@ -49,7 +49,7 @@ load('filelist')
                     time: item.time,
                     name: item.name,
                     size: (fs.statSync(path.join(options.root, filename)) || {}).size,
-                    download: `./record/${filename}`
+                    download: `/record/${filename}`
                 })
             })
         }
@@ -153,7 +153,7 @@ app.get('/api/record/:id', (req, res) => {
                         name: tasklist[id].name,
                         filename,
                         size: (fs.statSync(path.join(options.root, filename)) || {}).size,
-                        download: `./record/${filename}`
+                        download: `/record/${filename}`
                     }
                     filelist.unshift(file)
                     delete tasklist[id]
