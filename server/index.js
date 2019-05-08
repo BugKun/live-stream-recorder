@@ -48,11 +48,14 @@ load('filelist')
                     used: item.used,
                     time: item.time,
                     name: item.name,
+                    filename,
                     size: (fs.statSync(path.join(options.root, filename)) || {}).size,
                     download: `/record/${filename}`
                 })
             })
         }
+        save(tasklist, 'tasklist')
+        save(filelist, 'filelist')
     })
     .catch(err => {
         console.log(err)
@@ -109,6 +112,7 @@ app.get('/api/record/:id', (req, res) => {
             err: 'recording',
             msg: `房间[${id}]录制任务已存在！`
         })
+        return
     }
     getURL(id)
     .then(urls => {
@@ -137,33 +141,35 @@ app.get('/api/record/:id', (req, res) => {
             console.log(err)
             const index = ++tasklist[id].used;
             serverChan(options.SCKEY, `**【日志】**录制房间\`[${id}]\`出错，正在切换到备用线路\`[${index}]\``);
-            if(index < urls.length) {
-                recoders[id].record(urls[index].url, onerror)
-            } else {
-                serverChan(options.SCKEY, `**【日志】**录制房间\`[${id}]\`失败`);
-                recoders[id].fin()
-                .then(() => {
-                    const filename = `${tasklist[id].name}.stream.flv`
-                    const file = {
-                        roomID: id,
-                        used: tasklist[id].used,
-                        time: tasklist[id].time,
-                        timeEnd: new Date().getTime(),
-                        status: '出错了',
-                        name: tasklist[id].name,
-                        filename,
-                        size: (fs.statSync(path.join(options.root, filename)) || {}).size,
-                        download: `/record/${filename}`
-                    }
-                    filelist.unshift(file)
+            recoders[id].fin()
+            .then(() => {
+                const filename = `${tasklist[id].name}.stream.flv`
+                const file = {
+                    roomID: id,
+                    used: tasklist[id].used,
+                    time: tasklist[id].time,
+                    timeEnd: new Date().getTime(),
+                    status: '出错了',
+                    name: tasklist[id].name,
+                    filename,
+                    size: (fs.statSync(path.join(options.root, filename)) || {}).size,
+                    download: `/record/${filename}`
+                }
+                filelist.unshift(file)
+                save(tasklist, 'tasklist')
+                save(filelist, 'filelist')
+                if(index < urls.length) {
+                    recoders[id].record(urls[index].url, onerror)
+                } else {
+                    serverChan(options.SCKEY, `**【日志】**录制房间\`[${id}]\`失败`);
+                    delete recoders[id]
                     delete tasklist[id]
-                    save(tasklist, 'tasklist')
-                    save(filelist, 'filelist')
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-            }
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+           
         }
         recoders[id].record(urls[0].url, onerror)
         serverChan(options.SCKEY, `**【日志】**开始录制房间\`[${id}]\``);
