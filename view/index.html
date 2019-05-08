@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>live stream recorder</title>
-    <!-- <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script> -->
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
     <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
     <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
-    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+    <!-- <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script> -->
 </head>
 <body>
     <div id="app">
@@ -65,7 +65,7 @@
         </div>
         <div v-else>
             <h1>请输入密钥</h1>
-            <input type="password" v-model="netkey">
+            <input type="password" v-model="netkey" @keydown.enter="login()">
             <button @click="login">确认</button>
         </div>
     </div>

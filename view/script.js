@@ -196,10 +196,11 @@ new Vue({
             if(confirm('确定退出登陆吗？')) {
                 ajax({
                     method: 'GET',
-                    url: `/api/logout/${roomID}`
+                    url: `/api/logout`
                 })
                 .then(res => {
                     if (res.status) {
+                        this.isLogin = false
                     }
                 })
             }
