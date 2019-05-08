@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>live stream recorder</title>
+    <!-- <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script> -->
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div v-if="isLogin">
+            <div>
+                <button @click="add">新建</button>
+                <button @click="logout">退出登陆</button>
+            </div>
+            <h1>正在录制：</h1>
+            <table>
+                <tr>
+                    <td>roomID</td>
+                    <td>开始时间</td>
+                    <td>持续时间</td>
+                    <td>操作</td>
+                </tr>
+                <tr v-for="(li, i) in tasklist" :key="li.roomID + li.time + i" >
+                    <td>{{li.roomID}}</td>
+                    <td>{{dateFormat(li.time, 'yyyy-MM-dd h:m:s')}}</td>
+                    <td>{{li.timeEnd}}</td>
+                    <td>
+                        <button @click="stop(li.roomID)">停止</button>
+                    </td>
+                </tr>
+            </table>
+            <h1>已结束录制：</h1>
+            <div>
+                过滤：
+                <input type="text" v-model="search">
+            </div>
+            <table>
+                <tr>
+                    <td>roomID</td>
+                    <td>开始时间</td>
+                    <td>结束时间</td>
+                    <td>持续时间</td>
+                    <td>状态</td>
+                    <td>大小</td>
+                    <td>操作</td>
+                </tr>
+                <tr v-for="(li, i) in filelist" :key="li.roomID + li.time + i" >
+                    <td>{{li.roomID}}</td>
+                    <td>{{dateFormat(li.time, 'yyyy-MM-dd h:m:s')}}</td>
+                    <td>{{(li.timeEnd)? dateFormat(li.timeEnd, 'yyyy-MM-dd h:m:s') : '--'}}</td>
+                    <td>---</td>
+                    <td>{{li.status}}</td>
+                    <td>{{sizeConverter(li.size)}}</td>
+                    <td>
+                        <a :href="baseURL + li.download" download>下载</a>
+                        <a href="JavaScript:;" @click="del(li.roomID, li.time)">删除</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div v-else>
+            <h1>请输入密钥</h1>
+            <input type="password" v-model="netkey">
+            <button @click="login">确认</button>
+        </div>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>
