@@ -15,34 +15,32 @@ module.exports = class HTTP_FLV_REC {
     }
 
     record(url, onerror) {
-        const protocol = URL.parse(url).protocol;
-        if(protocol === 'https:') {
-            this.request = https.get(url).setTimeout(5000);
-        }
-        if(protocol === 'http:') {
-            this.request = http.get(url).setTimeout(5000);
-        }
-        if(this.recording) {
-            this.fin()
-        } 
-        this.recording = fs.createWriteStream(this.tempPath[this.tempPath.length - 1]);
-        if(!this.request) {
-            if(typeof onerror === 'function') onerror('地址无效');
-            return;
-        }
-        this.request.on('response', (res) => {
-            res.pipe(this.recording);
-            res.on('end', () => {
+        this.fin()
+        .then(() => {
+            const protocol = URL.parse(url).protocol;
+            if(protocol === 'https:') {
+                this.request = https.get(url).setTimeout(5000);
+            }
+            if(protocol === 'http:') {
+                this.request = http.get(url).setTimeout(5000);
+            }
+            this.recording = fs.createWriteStream(this.tempPath[this.tempPath.length - 1]);
+            if(!this.request) {
                 if(typeof onerror === 'function') onerror('地址无效');
-            });
-            res.on('error', (err) => {
+                return;
+            }
+            this.request.on('response', (res) => {
+                res.pipe(this.recording);
+                res.on('end', () => {
+                    if(typeof onerror === 'function') onerror('地址无效');
+                });
+                res.on('error', (err) => {
+                    if(typeof onerror === 'function') onerror(err);
+                });
+            }).on('error', (err) => {
                 if(typeof onerror === 'function') onerror(err);
             });
-        }).on('error', (err) => {
-            if(typeof onerror === 'function') onerror(err);
-        });
-        
-        return this;
+        })
     }
 
     fin(convert) {
