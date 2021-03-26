@@ -3,7 +3,5 @@
 npm-debug.log
 options.js
 sessions/*.json
-ffmpeg/*.exe
-record/*.flv
 database/*.json
 node_modules
