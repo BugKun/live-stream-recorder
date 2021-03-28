@@ -28,6 +28,7 @@
     // "strictPropertyInitialization": true,  /* 启用类中属性初始化的严格检查。 */
     // "noImplicitThis": true,                /* 在带隐式“any" 类型的 "this" 表达式上引发错误。 */
     // "alwaysStrict": true,                  /* 以严格模式进行分析，并为每个源文件发出 "use strict" 指令。 */
+    "resolveJsonModule": true,                /* 解析json文件 */
 
     /* 其他检查 */
     "noUnusedLocals": false,                   /* 报告未使用的局部变量上的错误。 */
