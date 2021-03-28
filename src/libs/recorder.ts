@@ -3,15 +3,17 @@ import path from 'path'
 import fs from 'fs-extra'
 
 function toFFmpegHttpHeader(headers: {[key: string]: string}): string {
-    return Object.entries(headers).map(([key, value]) => `${key}: ${value}`).join('\r\n')
+    return '"' + Object.entries(headers).map(([key, value]) => `${key}: ${value}`).join('\r\n') + '"'
 }
 
 export default async function (options) {
+    console.log(options, 'options')
     await fs.ensureDir(options.fileDir)
     const headers = {
         'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36',
         ...options.headers
     }
+  
     const ffmpeg = spawn(
         options.ffmpegPath,
         [
@@ -23,6 +25,7 @@ export default async function (options) {
             'copy',
             '-c:a',
             'copy',
+            '-y',
             path.join(options.fileDir, `${options.filename}.flv`)
         ]
     )

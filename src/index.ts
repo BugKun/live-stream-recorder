@@ -8,13 +8,18 @@ const options = require(path.resolve('options'))
 const liveRoomPath = path.resolve('live-room.json')
 let liveRoom = require(liveRoomPath)
 const recordData = Object.fromEntries(
-    liveRoom.map(item => ([
-        item.id,
-        new AutoRecord({
+    liveRoom.map(item => {
+        const autoRecord = new AutoRecord({
             ...options,
+            outputPath: options.root,
             ...item
         })
-    ]))
+        autoRecord.startMonitoring()
+        return [
+            item.id,
+            autoRecord
+        ]
+    })
 )
 
 function updateLiveRoom(data): Promise<void> {

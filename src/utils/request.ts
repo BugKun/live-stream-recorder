@@ -8,7 +8,7 @@ export interface configTypes extends http.RequestOptions{
 
 export default function request(config: configTypes): Promise<any> {
     return new Promise((resolve, reject) => {
-        simpleGet.concat({timeout: 10000, ...config}, function(err: Error, res: http.ServerResponse, dataRaw: string) {
+        simpleGet.concat({timeout: 60000, ...config}, function(err: Error, res: http.ServerResponse, dataRaw: string) {
             if(err) {
                 reject(err)
             } else {

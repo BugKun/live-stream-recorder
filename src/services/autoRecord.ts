@@ -31,7 +31,7 @@ export default class AutoRecord {
 
     constructor(options: optionsTypes) {
         this.options = options
-        this.provider = require(`./provider/${options.provider}`).default
+        this.provider = require(`../libs/provider/${options.provider}`).default
         this.state = {
             isMoniting: false,
             isRecording: false,
@@ -61,7 +61,11 @@ export default class AutoRecord {
 
     async autoRecord(config: providerParams) {
         if(!this.state.isRecording) {
-            const info: liveInfoTypes = await this.provider(config)
+            const info: liveInfoTypes = await this.provider({
+                ...config,
+                //@ts-ignore
+                liveRoomId: config.room_id,
+            })
             if(info.liveStatus) {
                 this.startRecord(info)
             }
@@ -75,14 +79,16 @@ export default class AutoRecord {
             url: info.urls[0],
             ffmpegPath: this.options.ffmpegPath,
             fileDir: path.join(this.options.outputPath, `${info.uid}-${info.username}`),
-            filename: `直播录制-${info.uid}-${info.username}-${dayjs().format('YYYY-MM-DD_HH:mm:ss')}-${info.title}`,
-            onStdout(data: Buffer) {
+            filename: `直播录制-${info.uid}-${info.username}-${dayjs().format('YYYY-MM-DD_HH-mm-ss')}-${info.title}`,
+            onStdout: (data: Buffer) => {
+                console.log(data.toString(), 'onStdout')
                 this.state.log += data.toString() + '\n'
             },
-            onStderr(data: Buffer) {
+            onStderr: (data: Buffer) => {
+                console.log(data.toString(), 'onStderr')
                 this.state.log += data.toString() + '\n'
             },
-            onClose() {
+            onClose: () => {
                 this.state.isRecording = false
                 this.recorder = null
             },
