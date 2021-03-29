@@ -5,7 +5,7 @@
   "main": "test.js",
   "scripts": {
     "start": "node ./build/index",
-    "dev": "ts-node --project tsconfig.json ./src/index"
+    "dev": "ts-node -r tsconfig-paths/register --project tsconfig.json ./src/index"
   },
   "license": "ISC",
   "dependencies": {

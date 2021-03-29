@@ -1,5 +1,4 @@
-// import request from '@Utils/request';
-import request from '../../utils/request';
+import request from '@Utils/request';
 import {liveInfoTypes, providerParams} from '@Types';
 
 export default async function getLiveInfo({liveRoomId}: providerParams): Promise<liveInfoTypes> {
